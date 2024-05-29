@@ -1,0 +1,4 @@
+PyQt5
+launchdarkly-server-sdk
+requests
+pyyaml
