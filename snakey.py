@@ -7,10 +7,22 @@ import ldclient
 from ldclient.config import Config
 from ldclient import Context
 
+
+def load_configuration(filename):
+    with open(filename, "r") as f:
+        config = yaml.safe_load(f)
+    return config
+
+def get_config_item(config, key):
+    return config[key]
+
+config = load_configuration("config.yaml")
+ldapikey = get_config_item(config, "ldapikey")
+
 # Connect to LD at init. Must be a Singleton, so it's here.
 # Singletonness is enforced by the get(), but let's make sure
 # we only call it once.
-ldclient.set_config(Config("sdk-62284ff5-1b09-4a56-83a2-dfc64f0af575"))
+ldclient.set_config(Config(ldapikey))
 client = ldclient.get()
 
 
@@ -122,8 +134,10 @@ class GUIApp(QWidget):
         onoroff = client.variation("node-test", self.context, False)
         showNewFeature = client.variation("super-new-feature", self.context, False)
 
+        # Update the flag value text box
         self.textField.setText(str(onoroff))
 
+        # If node-test flag is on AND super-new-feature is on, show the button.
         if onoroff and showNewFeature:
             self.newButton.setVisible(True)
             print("🦄🦄🦄🦄🦄🦄🦄🦄🦄🦄")
@@ -131,8 +145,6 @@ class GUIApp(QWidget):
             self.newButton.setVisible(False)
             print("😢😢😢😢😢😢😢😢😢😢")
 
-
-        # Also check if we should serve
 
 
 def main():
